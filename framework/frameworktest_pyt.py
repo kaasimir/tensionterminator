@@ -105,7 +105,7 @@ class FrameworkLogger():
 
         logger.metrics_data["inference_time"] = inference_duration
         logger.dump_json()
-        print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
+        # print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
     
     def generate_statistics(self):
         log_dir = "logs"
