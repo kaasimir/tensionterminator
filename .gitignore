@@ -1,5 +1,5 @@
-/models/
-/data/
-/testvenv/
-/db_builder/build/
-/db_builder/dist/
+**/__pycache__/*
+trigger_finder/tt_video_data/*
+trigger_finder/data/*
+.env
+*.pt

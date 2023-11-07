@@ -10,8 +10,7 @@ import os
 from matplotlib.backends.backend_pdf import PdfPages
 import torch
 
-#from torch.utils.tensorboard import SummaryWriter
-
+from torch.utils.tensorboard import SummaryWriter
 
 # Benutzerdefinierter Callback zum Speichern von Daten in JSON
 class FrameworkLogger():
@@ -26,7 +25,6 @@ class FrameworkLogger():
         self.log_dir = log_dir
         self.func = func
         self.func_input_args = func_input_args
-
     class JSONLogger():
         def __init__(self, model_name="model", log_dir="logs"):
             self.model_name = model_name
@@ -62,14 +60,13 @@ class FrameworkLogger():
         def dump_json(self):
             with open(self.filepath, 'w') as json_file:
                 json.dump(self.metrics_data, json_file)
-
     def train_model(self):
 
         # Modell trainieren
         logger = self.JSONLogger(model_name=self.model_name, log_dir=self.log_dir)
 
         self.func_input_args.append(0)
-
+        
         for epoch in range(self.epoch_num):
             print(f"Epoch {epoch}")
             self.func_input_args[-1] = epoch
@@ -77,8 +74,9 @@ class FrameworkLogger():
             logs = self.func(self.func_input_args)
             end_time = time.time()
             training_duration = end_time - start_time
-            logs["epoch_duration"] = training_duration
+            logs["epoch_duration"]= training_duration
             logger.on_epoch_end(epoch, logs)
+
 
         # self.model.fit(self.train_images, self.train_labels, epochs=self.epoch_num, validation_data=(self.test_images, self.test_labels), callbacks=[logger])
 
@@ -89,7 +87,7 @@ class FrameworkLogger():
         torch.save(self.model.state_dict(), "./temp_model.pt")
         model_size = os.path.getsize("temp_model.pt") / (1024)  # Convert bytes to kilobytes
         os.remove("temp_model.pt")  # Delete the temporary file
-
+        
         logger.metrics_data["model_size_KB"] = model_size
         logger.metrics_data["num_epochs"] = self.epoch_num
         # logger.metrics_data["training_data_size"] = len(self.train_images)
@@ -100,15 +98,15 @@ class FrameworkLogger():
 
         # Inferenz durchführen und Zeit aufzeichnen
         infer_start_time = time.time()
-        # predictions = self.model.predict(self.test_images)
+        #predictions = self.model.predict(self.test_images)
 
         infer_end_time = time.time()
         inference_duration = infer_end_time - infer_start_time
 
         logger.metrics_data["inference_time"] = inference_duration
         logger.dump_json()
-        # print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
-
+        print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
+    
     def generate_statistics(self):
         log_dir = "logs"
         log_files = [f for f in os.listdir(log_dir) if f.endswith('.json')]
