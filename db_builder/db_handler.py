@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-import db_structure as dbs
+import db_builder.db_structure as dbs
 
 
 class DB_Conn():
