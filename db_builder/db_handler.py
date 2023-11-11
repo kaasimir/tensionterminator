@@ -25,8 +25,8 @@ class DB_Conn():
                           f"{self.port}/" \
                           f"{self.database}"
 
-            engine = create_engine(self.db_url, echo=True)
-            Session = sessionmaker(bind=engine)
+            self.engine = create_engine(self.db_url, echo=True)
+            Session = sessionmaker(bind=self.engine)
             self.session = Session()
 
             print(f"Connected to PostgreSQL, DB: {self.database}")
@@ -38,6 +38,10 @@ class DB_Conn():
         if self.session:
             self.session.close()
             print(f"Connection to {self.database} closed")
+
+    def get_engine(self):
+        return self.engine
+
 
     def get_filepath_with_trigger(self):
 
