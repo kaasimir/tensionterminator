@@ -1,3 +1,5 @@
 /models/
 /data/
 /testvenv/
+/db_builder/build/
+/db_builder/dist/
