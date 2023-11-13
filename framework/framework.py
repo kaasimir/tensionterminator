@@ -1,4 +1,4 @@
-# from tensorflow.keras.callbacks import Callback
+from tensorflow.keras.callbacks import Callback
 import json
 import os
 import time
@@ -15,17 +15,110 @@ from torch.utils.tensorboard import SummaryWriter
 # Benutzerdefinierter Callback zum Speichern von Daten in JSON
 class FrameworkLogger():
     def __init__(self, epochs, model, func, func_input_args, model_name="my_custom_model", log_dir="logs"):
-        # self.train_images = train_images
-        # self.train_labels = train_labels
-        # self.test_images = test_images
-        # self.test_labels = test_labels
+        if len(func_input_args) == 4 and func is None:
+            self.train_images = func_input_args[0]
+            self.train_labels = func_input_args[1]
+            self.test_images = func_input_args[2]
+            self.test_labels = func_input_args[3]
+        else:
+            self.train_images = func_input_args[0]
         self.epoch_num = epochs
         self.model = model
         self.model_name = model_name
         self.log_dir = log_dir
         self.func = func
         self.func_input_args = func_input_args
-    class JSONLogger():
+    class JSONLogger_pyt():
+        def __init__(self, model_name="model", log_dir="logs"):
+            self.model_name = model_name
+            self.log_dir = log_dir
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            train_start_time = datetime.now().strftime('%Y%m%d-%H%M%S')
+            self.filepath = os.path.join(log_dir, f"metrics_{train_start_time}.json")
+            self.metrics_data = {
+                "name": model_name,
+                "timestamp": train_start_time
+            }
+            self.log_start_time = time.time()
+            self.log_end_time = None
+
+        def on_epoch_end(self, epoch, logs=None):
+            self.log_end_time = time.time()
+            epoch_duration = self.log_end_time - self.log_start_time
+            print(f"Epoch {epoch} took {epoch_duration:.2f} seconds")
+            self.log_start_time = self.log_end_time
+            logs = logs or {}
+            if "epochs" not in self.metrics_data:
+                self.metrics_data["epochs"] = []
+                self.metrics_data["epoch_duration"] = []
+                for key in logs:
+                    self.metrics_data[key] = []
+            self.metrics_data["epochs"].append(epoch)
+            # self.metrics_data["epoch_duration"].append(epoch_duration)
+            for key, value in logs.items():
+                self.metrics_data[key].append(value)
+            self.dump_json()
+
+        def dump_json(self):
+            with open(self.filepath, 'w') as json_file:
+                json.dump(self.metrics_data, json_file)
+    def train_model_pyt(self):
+
+        # Modell trainieren
+        logger = self.JSONLogger_pyt(model_name=self.model_name, log_dir=self.log_dir)
+
+        self.func_input_args.append(0)
+        
+        self.start_time_total = time.time()
+        for epoch in range(self.epoch_num):
+            print(f"Epoch {epoch}")
+            self.func_input_args[-1] = epoch
+            start_time = time.time()
+            logs = self.func(self.func_input_args)
+            end_time = time.time()
+            training_duration = end_time - start_time
+            logs["epoch_duration"]= training_duration
+            logger.on_epoch_end(epoch, logs)
+        self.end_time_total = time.time()
+        training_time = self.end_time_total - self.start_time_total
+
+        torch.save(self.model.state_dict(), "./temp_model.pt")
+        model_size = os.path.getsize("temp_model.pt") / (1024)  # Convert bytes to kilobytes
+        os.remove("temp_model.pt")  # Delete the temporary file
+        
+        logger.metrics_data["model_size_KB"] = model_size
+        logger.metrics_data["num_epochs"] = self.epoch_num
+        # logger.metrics_data["training_data_size"] = len(self.train_images)
+
+        if self.train_images.sampler is not None:
+            train_dataset_size = len(self.train_images.sampler)
+        else:
+            train_dataset_size = len(self.train_images.dataset)
+
+        # print(f"Size of the train dataset: {train_dataset_size}")
+        logger.metrics_data["training_data_size"] = train_dataset_size
+
+        logger.metrics_data["training_time"] = training_time
+        logger.dump_json()
+        print(f"Training time: {training_duration:.2f} seconds")
+
+        # Inferenz durchführen und Zeit aufzeichnen
+        infer_start_time = time.time()
+        # predictions = self.model.predict(self.test_images)
+        self.model.eval()
+        with torch.no_grad():
+            for inputs in self.train_images:
+                outputs = self.model(inputs)
+            print(outputs)
+        infer_end_time = time.time()
+        inference_duration = infer_end_time - infer_start_time
+
+        logger.metrics_data["inference_time"] = inference_duration
+        logger.dump_json()
+        # print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
+    
+    class JSONLogger_tf(Callback):
         def __init__(self, model_name="model", log_dir="logs"):
             self.model_name = model_name
             self.log_dir = log_dir
@@ -60,37 +153,22 @@ class FrameworkLogger():
         def dump_json(self):
             with open(self.filepath, 'w') as json_file:
                 json.dump(self.metrics_data, json_file)
-    def train_model(self):
+    def train_model_tf(self):
 
         # Modell trainieren
-        logger = self.JSONLogger(model_name=self.model_name, log_dir=self.log_dir)
-
-        self.func_input_args.append(0)
-        
-        for epoch in range(self.epoch_num):
-            print(f"Epoch {epoch}")
-            self.func_input_args[-1] = epoch
-            start_time = time.time()
-            logs = self.func(self.func_input_args)
-            end_time = time.time()
-            training_duration = end_time - start_time
-            logs["epoch_duration"]= training_duration
-            logger.on_epoch_end(epoch, logs)
-
-
-        # self.model.fit(self.train_images, self.train_labels, epochs=self.epoch_num, validation_data=(self.test_images, self.test_labels), callbacks=[logger])
+        logger = self.JSONLogger_tf(model_name=self.model_name, log_dir=self.log_dir)
+        start_time = time.time()
+        self.model.fit(self.train_images, self.train_labels, epochs=self.epoch_num, validation_data=(self.test_images, self.test_labels), callbacks=[logger])
+        end_time = time.time()
+        training_duration = end_time - start_time
 
         # Modellgröße protokollieren
-        # self.model.save("temp_model.keras")
-        # model_size = os.path.getsize("temp_model.keras") / (1024)  # Convert bytes to kilobytes
-        # os.remove("temp_model.keras")  # Delete the temporary file
-        torch.save(self.model.state_dict(), "./temp_model.pt")
-        model_size = os.path.getsize("temp_model.pt") / (1024)  # Convert bytes to kilobytes
-        os.remove("temp_model.pt")  # Delete the temporary file
-        
+        self.model.save("temp_model.keras")
+        model_size = os.path.getsize("temp_model.keras") / (1024)  # Convert bytes to kilobytes
+        os.remove("temp_model.keras")  # Delete the temporary file
         logger.metrics_data["model_size_KB"] = model_size
         logger.metrics_data["num_epochs"] = self.epoch_num
-        # logger.metrics_data["training_data_size"] = len(self.train_images)
+        logger.metrics_data["training_data_size"] = len(self.train_images)
 
         logger.metrics_data["training_time"] = training_duration
         logger.dump_json()
@@ -98,15 +176,18 @@ class FrameworkLogger():
 
         # Inferenz durchführen und Zeit aufzeichnen
         infer_start_time = time.time()
-        #predictions = self.model.predict(self.test_images)
-
+        predictions = self.model.predict(self.test_images)
         infer_end_time = time.time()
         inference_duration = infer_end_time - infer_start_time
 
         logger.metrics_data["inference_time"] = inference_duration
         logger.dump_json()
-        # print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
-    
+        print(f"Inference time for {len(self.test_images)} samples: {inference_duration:.2f} seconds")
+
+
+
+
+
     def generate_statistics(self):
         log_dir = "logs"
         log_files = [f for f in os.listdir(log_dir) if f.endswith('.json')]
