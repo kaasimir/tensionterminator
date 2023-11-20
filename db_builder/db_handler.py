@@ -47,7 +47,7 @@ class DB_Conn():
 
         loops_with_trigger = self.session.query(dbs.Loop).join(dbs.tools_loop_association).filter(
             dbs.Loop.human_labeled == True,
-            dbs.tools_loop_association.c.tool_id == 1  # Modify this condition as needed
+            dbs.tools_loop_association.c.tool_id == 2  # Modify this condition as needed
         ).all()
 
         loops_with_trigger_ids = []
@@ -71,7 +71,7 @@ class DB_Conn():
 
         loops_with_buoballs = self.session.query(dbs.Loop).join(dbs.tools_loop_association).filter(
             dbs.Loop.human_labeled == True,
-            dbs.tools_loop_association.c.tool_id != 1  # Modify this condition as needed
+            dbs.tools_loop_association.c.tool_id != 2  # Modify this condition as needed
         ).all()
 
         loops_with_buoballs_ids = []
@@ -91,11 +91,60 @@ class DB_Conn():
 
         return buoballs_file_path_list
 
+    def get_filepath_with_leftside(self):
+
+        loops_with_leftside = self.session.query(dbs.Loop).join(dbs.bodyside_loop_association).filter(
+            dbs.Loop.human_labeled == True,
+            dbs.bodyside_loop_association.c.bodyside_id == 2  # Modify this condition as needed
+        ).all()
+
+        loops_with_leftside_ids = []
+
+        for l in loops_with_leftside:
+            loops_with_leftside_ids.append(l.id)
+
+        rgb_data_with_leftside = self.session.query(dbs.Video).join(dbs.Loop, dbs.Video.loop_id == dbs.Loop.id).filter(
+            dbs.Video.device == 'rgbCam',
+            dbs.Loop.id.in_(loops_with_leftside_ids)
+        ).all()
+
+        leftside_file_path_list = []
+
+        for x in rgb_data_with_leftside:
+            leftside_file_path_list.append(x.file_path)
+
+        return leftside_file_path_list
+
+    def get_filepath_with_middle(self):
+
+        loops_with_middle = self.session.query(dbs.Loop).join(dbs.bodyside_loop_association).filter(
+            dbs.Loop.human_labeled == True,
+            dbs.bodyside_loop_association.c.bodyside_id == 3  # Modify this condition as needed
+        ).all()
+
+        loops_with_middle_ids = []
+
+        for m in loops_with_middle:
+            loops_with_middle_ids.append(m.id)
+
+        rgb_data_with_middle = self.session.query(dbs.Video).join(dbs.Loop, dbs.Video.loop_id == dbs.Loop.id).filter(
+            dbs.Video.device == 'rgbCam',
+            dbs.Loop.id.in_(loops_with_middle_ids)
+        ).all()
+
+        middle_file_path_list = []
+
+        for x in rgb_data_with_middle:
+            middle_file_path_list.append(x.file_path)
+
+        return middle_file_path_list
+
+
     def get_filepath_with_rightside(self):
 
         loops_with_rightside = self.session.query(dbs.Loop).join(dbs.bodyside_loop_association).filter(
             dbs.Loop.human_labeled == True,
-            dbs.bodyside_loop_association.c.bodyside_id == 3  # Modify this condition as needed
+            dbs.bodyside_loop_association.c.bodyside_id == 4  # Modify this condition as needed
         ).all()
 
         loops_with_rightside_ids = []
@@ -114,52 +163,3 @@ class DB_Conn():
             rightside_file_path_list.append(x.file_path)
 
         return rightside_file_path_list
-    
-    
-    def get_filepath_with_leftside(self):
-
-        loops_with_leftside = self.session.query(dbs.Loop).join(dbs.bodyside_loop_association).filter(
-            dbs.Loop.human_labeled == True,
-            dbs.bodyside_loop_association.c.bodyside_id == 1  # Modify this condition as needed
-        ).all()
-
-        loops_with_leftside_ids = []
-
-        for l in loops_with_leftside:
-            loops_with_leftside_ids.append(l.id)
-
-        rgb_data_with_leftside = self.session.query(dbs.Video).join(dbs.Loop,dbs.Video.loop_id == dbs.Loop.id).filter(
-            dbs.Video.device == 'rgbCam',
-            dbs.Loop.id.in_(loops_with_leftside_ids)
-        ).all()
-
-        leftside_file_path_list = []
-
-        for x in rgb_data_with_leftside:
-            leftside_file_path_list.append(x.file_path)
-
-        return leftside_file_path_list
-    
-    def get_filepath_with_middle(self):
-
-        loops_with_middle = self.session.query(dbs.Loop).join(dbs.bodyside_loop_association).filter(
-            dbs.Loop.human_labeled == True,
-            dbs.bodyside_loop_association.c.bodyside_id == 2  # Modify this condition as needed
-        ).all()
-
-        loops_with_middle_ids = []
-
-        for m in loops_with_middle:
-            loops_with_middle_ids.append(m.id)
-
-        rgb_data_with_middle = self.session.query(dbs.Video).join(dbs.Loop,dbs.Video.loop_id == dbs.Loop.id).filter(
-            dbs.Video.device == 'rgbCam',
-            dbs.Loop.id.in_(loops_with_middle_ids)
-        ).all()
-
-        middle_file_path_list = []
-
-        for x in rgb_data_with_middle:
-            middle_file_path_list.append(x.file_path)
-
-        return middle_file_path_list
