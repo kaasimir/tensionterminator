@@ -7,7 +7,7 @@ from PIL import Image #lib pillow --> installation: https://pillow.readthedocs.i
 
 def prepare_data():
     #importing JSON
-    pd_object = pd.read_json("data.json")
+    pd_object = pd.read_json("tensionterminator/analyses/data.json")
     df = pd.DataFrame(pd_object)
 
     #converting string to datetime datatype
@@ -41,7 +41,7 @@ def tool_usage_pieplot(df):
     
     plt.setp(autotexts, size=8, weight="bold")
     plt.title("distribution of tools used")
-    plt.savefig('tool_distribution.png')
+    plt.savefig('tensionterminator/analyses/tool_distribution.png')
         
     
     return
@@ -67,7 +67,7 @@ def time_spent_boxplot(df):
     plt.title("Time Spent")
     plt.xlabel("time(m)")
     plt.yticks([]) #to hide y-axis label
-    plt.savefig("time_spent.png")
+    plt.savefig("tensionterminator/analyses/time_spent.png")
     
     return
     
@@ -79,13 +79,13 @@ tool_usage_pieplot(df[["tool"]])
 time_spent_boxplot(df[["time_spent"]])
 
 
-im1 = Image.open("time_spent.png")
-im2 = Image.open("tool_distribution.png")
+im1 = Image.open("tensionterminator/analyses/time_spent.png")
+im2 = Image.open("tensionterminator/analyses/tool_distribution.png")
 
 #array for future diagramms
 images = [im2]
 #saving all images in one PDF
-im1.save("diagrams.pdf", save_all=True, append_images=images)
+im1.save("tensionterminator/analyses/diagrams.pdf", save_all=True, append_images=images)
 
 
 
