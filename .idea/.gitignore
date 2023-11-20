@@ -6,3 +6,7 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# fragments created by analyses
+tensionterminator/analyses/tool_distribution.png
+tensionterminator/analyses/time_spent.png
+tensionterminator/analyses/diagrams.pdf
