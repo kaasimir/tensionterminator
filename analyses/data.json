@@ -1,0 +1,82 @@
+[
+    {
+        "starttime": "2023-10-13 13:17:56.212830",
+        "endtime": "2023-10-13 13:20:59.212150",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:10:59.212150",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 14:21:25.791659",
+        "endtime": "2023-10-13 14:30:59.212150",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 14:27:46.668796",
+        "endtime": "2023-10-13 14:40:59.212150",
+        "location": "MCI",
+        "tool": "trigger",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 13:57:46.668796",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:10:59.212150",
+        "location": "MCI",
+        "tool": "trigger",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:12:59.212150",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:02:59.212150",
+        "location": "MCI",
+        "tool": "duoballs",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:13:59.212150",
+        "location": "MCI",
+        "tool": "trigger",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:41:47.120519",
+        "endtime": "2023-10-13 14:10:59.212150",
+        "location": "MCI",
+        "tool": "trigger",
+        "person": "NA"
+    },
+    {
+        "starttime": "2023-10-13 13:51:47.120519",
+        "endtime": "2023-10-13 14:20:59.212150",
+        "location": "MCI",
+        "tool": "trigger",
+        "person": "NA"
+    }
+    
+
+
+]
