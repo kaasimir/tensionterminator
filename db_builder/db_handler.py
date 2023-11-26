@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 import db_builder.db_structure as dbs
@@ -163,3 +163,9 @@ class DB_Conn():
             rightside_file_path_list.append(x.file_path)
 
         return rightside_file_path_list
+
+    def get_filepath_by_loop_id(self, id: str):
+        query = text("SELECT file_path FROM video WHERE loop_id = :loop_id AND device = 'rgbCam'")
+        result = self.session.execute(query, {"loop_id": id})
+        return result.scalar()
+
