@@ -169,3 +169,31 @@ class DB_Conn():
         result = self.session.execute(query, {"loop_id": id})
         return result.scalar()
 
+    def get_unlabeled_loop_id(self) -> list:
+        query = text("SELECT id FROM loop WHERE human_labeled = false")
+        result = self.session.execute(query)
+        loop_ids = [row[0] for row in result.fetchall()]
+        return sorted(loop_ids)
+
+    def set_tool_timer(self, loop_id, tool, time):
+        desired_loop = self.session.query(dbs.Loop).filter_by(id=loop_id).first()
+
+        if desired_loop:
+            # Get all tools related to the loop
+            tools_related_to_loop = desired_loop.tools
+
+            # Delete all related tools
+            for tools in tools_related_to_loop:
+                if tools == tool:
+                    self.session.delete(tools)
+
+            # Commit changes to the database
+            self.session.commit()
+
+        desired_loop = self.session.query(dbs.Loop).filter_by(id=loop_id).first()
+        new_tool = dbs.Tools(tool=tool, time_in_use=time)
+        desired_loop.tools.append(new_tool)
+        self.session.add(new_tool)
+        self.session.commit()
+
+
