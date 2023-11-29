@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 import db_builder.db_structure as dbs
+import pandas as pd
 
 
 class DB_Conn():
@@ -168,6 +169,44 @@ class DB_Conn():
         query = text("SELECT file_path FROM video WHERE loop_id = :loop_id AND device = 'rgbCam'")
         result = self.session.execute(query, {"loop_id": id})
         return result.scalar()
+
+    def get_user_by_loop_id(self, id):
+        query = text("SELECT name, surename FROM users WHERE id = :id")
+        result = self.session.execute(query, {"id": id})
+        return result.scalar()
+
+    def get_labeled_loop_id(self) -> list:
+        query = text("SELECT id FROM loop WHERE human_labeled = true")
+        result = self.session.execute(query)
+        loop_ids = [row[0] for row in result.fetchall()]
+        return sorted(loop_ids)
+
+    def get_human_labeled_data_with_users(self) -> pd.DataFrame:
+        query = text("""
+            SELECT l.id AS loop_id, u.name, u.surename
+            FROM loop l
+            LEFT JOIN users u ON l.user_id = u.id
+            WHERE l.human_labeled = true
+        """)
+        result = self.session.execute(query)
+
+        # Convert the query result to a Pandas DataFrame
+        df = pd.DataFrame(result.fetchall(), columns=['loop_id', 'name', 'surename'])
+        return df
+
+    def get_combined_labeled_data(self) -> pd.DataFrame:
+        query = text("""
+            SELECT l.id AS loop_id, v.file_path, u.name, u.surename
+            FROM loop l
+            LEFT JOIN video v ON l.id = v.loop_id AND v.device = 'rgbCam'
+            LEFT JOIN users u ON l.user_id = u.id
+            WHERE l.human_labeled = true
+        """)
+        result = self.session.execute(query)
+
+        # Convert the query result to a Pandas DataFrame
+        df = pd.DataFrame(result.fetchall(), columns=['loop_id', 'file_path', 'name', 'surename'])
+        return df
 
     def get_unlabeled_loop_id(self) -> list:
         query = text("SELECT id FROM loop WHERE human_labeled = false")
