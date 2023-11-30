@@ -1,0 +1,1 @@
+{"name": "bodyside_VGG16_Weights.IMAGENET1K_V1_8kern", "timestamp": "20231130-095657", "epochs": [0], "epoch_duration": [4555.774141073227, 4555.772147893906], "loss": [0.1319106902980867], "accuracy": [0.5365334153175354], "val_loss": [0.12596806848612357], "val_accuracy": [0.5329724409448819]}
