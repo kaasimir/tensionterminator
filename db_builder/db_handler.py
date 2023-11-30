@@ -200,12 +200,34 @@ class DB_Conn():
             FROM loop l
             LEFT JOIN video v ON l.id = v.loop_id AND v.device = 'rgbCam'
             LEFT JOIN users u ON l.user_id = u.id
+            LEFT JOIN bodyside_loop_association b ON l.id = b.loop_id
             WHERE l.human_labeled = true
         """)
         result = self.session.execute(query)
 
         # Convert the query result to a Pandas DataFrame
         df = pd.DataFrame(result.fetchall(), columns=['loop_id', 'file_path', 'name', 'surename'])
+        return df
+
+    def get_data(self) -> pd.DataFrame:
+        query = text("""
+            SELECT l.id AS loop_id, l.timestamp, l.session_length, l.location, l.human_labeled, v.file_path, u.name, u.surename, 
+            b.bodyside_id, t.tool_id, tt.tool, tt.time_in_use AS tool_time_in_use, bs.side AS bodyside, bs.time_in_use AS bodyside_time_in_use
+            FROM loop l
+            LEFT JOIN video v ON l.id = v.loop_id AND v.device = 'rgbCam'
+            LEFT JOIN users u ON l.user_id = u.id
+            LEFT JOIN bodyside_loop_association b ON l.id = b.loop_id
+            LEFT JOIN tools_loop_association t ON l.id = t.loop_id
+            LEFT JOIN tools tt ON t.tool_id = tt.id
+            LEFT JOIN bodyside bs ON b.bodyside_id = bs.id
+        """)
+        result = self.session.execute(query)
+
+        # Convert the query result to a Pandas DataFrame
+        df = pd.DataFrame(result.fetchall(),
+                          columns=['loop_id', 'timestamp', 'session_length', 'location', 'human_labeled',
+                                   'file_path', 'name', 'surename', 'bodyside_id', 'tool_id',
+                                   'tool', 'tool_time_in_use', 'bodyside', 'bodyside_time_in_use'])
         return df
 
     def get_unlabeled_loop_id(self) -> list:
@@ -251,4 +273,17 @@ class DB_Conn():
         self.session.add(new_bodyside)
         self.session.commit()
 
+    def get_user_id_by_name(self, name, surename):
+        user = self.session.query(dbs.Users).filter_by(name=name, surename=surename).first()
+        if user:
+            return user.id
+        else:
+            return 1
 
+    def set_user_id_loops(self, user_id, loop_id):
+        loop_object = self.session.query(dbs.Loop).filter_by(id=loop_id).first()
+
+        if loop_object:
+            loop_object.user_id = user_id
+            self.session.add(loop_object)
+            self.session.commit()

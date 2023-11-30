@@ -34,21 +34,21 @@ class UsageTimePlotter:
         return data_df.groupby(self.second_column)['time_in_use_seconds'].sum().reset_index()
 
     def plot(self, table):
+        title = f"Count of each {table} (human_labeled = False)"
         self.time_sum_per_data_df = self.datatransformer(table)
-        colors = sns.color_palette('husl', n_colors=len(self.time_sum_per_data_df))
+        colors = sns.color_palette('tab10', n_colors=len(self.time_sum_per_data_df))
 
-        plt.figure(figsize=(12, 8))
         self.second_column = self.time_sum_per_data_df.columns[0]
         print(self.second_column)
         plt.bar(self.time_sum_per_data_df[self.second_column], self.time_sum_per_data_df['time_in_use_seconds'] / 60,
                 color=colors)
 
         plt.xlabel(table)
-        plt.ylabel('Minuten')
-        plt.title(
-            f"Count of each {table}, summarized time: {self.time_sum_per_data_df['time_in_use_seconds'].sum() / 60} min")
+        plt.ylabel('Session length (minutes)')
+        plt.title(title)
 
-        plt.savefig(f"diagrams/{table}_usage_per_unlabeled_Data.png")
+        plt.savefig(f"diagrams/{title.split('(')[0]}_hl_f.png")
+
 
 
 
