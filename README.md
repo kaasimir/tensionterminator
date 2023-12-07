@@ -10,7 +10,7 @@ Before proceeding with the installation of the PostgreSQL Database, ensure that 
 2. Run the "big_block_create_02.exe" on Windows or execute the Python code located in the "BigBlock_1" directory. On macOS, a compatibility tool like Wine or CrossOver is required for running the .exe.
 3. During execution, provide your username and password, corresponding to the login data used to set up your database administration tool.
 
-After these installations, you'll be able to retrieve data for the models in the subsequent steps. Refer to the Database and Data Collection Section 4.2.5 Version 4 for more details.
+After these installations, you'll be able to retrieve data for the models in the subsequent steps. 
 
 ### 2 Technical Setup Installation
 
@@ -86,4 +86,4 @@ Extend the current setup and train models for new classes by:
 2. In the "db_handler," create new functions with file paths for the chosen new classes.
 3. Navigate to the "notebooks" directory and define a new class directory.
 4. Copy and paste "Dataloader" and "Datamodel" for the new classes, modifying parameters and variables accordingly.
-5. Further details can be found in the Implementation Chapters and Sub-chapters of this paper.
+
