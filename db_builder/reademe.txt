@@ -7,3 +7,5 @@ Ho to create the TensionTerminator_DB_builder_xxx.exe
 The purpose of TensionTerminator_DB_builder_xxx.exe is to create a new DB in postgres for the videodata and our
 application. Therefore, you need to place the .exe the Session_data.xlsx in a folder together with tt_video_data.
 The applikation will ask you for the db credentials and build a new db with filepaths to the tt_video_data.
+
+command: pyinstaller --onefile --name big_block_create_x big_block_create.py ; x for version
