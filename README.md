@@ -1,8 +1,8 @@
 # Tension Terminator README
 
-## 3 Installation Instructions
+## Installation Instructions
 
-### 3.1 Database Installation
+### 1 Database Installation
 
 Before proceeding with the installation of the PostgreSQL Database, ensure that a database administration and management tool is installed. We recommend using "pgAdmin," but alternatives like DBeaver, Datagrip, or Navicat can also be used. Install pgAdmin by referring to [pgAdmin Download](https://www.pgadmin.org/download/).
 
@@ -12,7 +12,7 @@ Before proceeding with the installation of the PostgreSQL Database, ensure that 
 
 After these installations, you'll be able to retrieve data for the models in the subsequent steps. Refer to the Database and Data Collection Section 4.2.5 Version 4 for more details.
 
-### 3.2 Technical Setup Installation
+### 2 Technical Setup Installation
 
 Follow these steps to retrieve the source code and create a working environment:
 
@@ -65,7 +65,7 @@ Follow these steps to retrieve the source code and create a working environment:
 
 Ensure that the requirements.txt file is present in your project folder. If not, download and place it manually.
 
-### 3.3 Start Training Models
+### 3 Start Training Models
 
 Once the database is installed, and the source code is retrieved, follow these steps:
 
@@ -78,7 +78,7 @@ Once the database is installed, and the source code is retrieved, follow these s
    - Refer to the provided documentation for available model setups.
    - Run the code.
 
-### 3.4 Extend Current Setup with New Classes
+### 4 Extend Current Setup with New Classes
 
 Extend the current setup and train models for new classes by:
 
