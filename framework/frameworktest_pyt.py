@@ -12,7 +12,6 @@ import torch
 
 #from torch.utils.tensorboard import SummaryWriter
 
-
 # Benutzerdefinierter Callback zum Speichern von Daten in JSON
 class FrameworkLogger():
     def __init__(self, epochs, model, func, func_input_args, model_name="my_custom_model", log_dir="logs"):
