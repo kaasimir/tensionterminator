@@ -1,3 +1,8 @@
+**/__pycache__/*
+trigger_finder/tt_video_data/*
+trigger_finder/data/*
+.env
+*.pt
 /models/
 /data/
 /testvenv/
